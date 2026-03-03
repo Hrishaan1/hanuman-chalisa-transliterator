@@ -20,8 +20,8 @@
 No build tools or dependencies required. Just open `index.html` in a browser.
 
 ```bash
-git clone https://github.com/your-username/hanuman-chalisa
-cd hanuman-chalisa
+git clone https://github.com/Hrishaan1/hanuman-chalisa-transliterator.git
+cd hanuman-chalisa-transliterator
 open index.html
 ```
 
