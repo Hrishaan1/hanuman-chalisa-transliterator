@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hanuman Chalisa – M.S. Subbulakshmi</title>
+<style>
+  :root {
+    --bg: #0d0a1a;
+    --panel: #16102b;
+    --border: #2e2252;
+    --accent: #f5a623;
+    --accent2: #e05d00;
+    --highlight: #ffe066;
+    --text: #e8deff;
+    --muted: #8b7bb5;
+    --active-bg: rgba(245,166,35,0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Georgia', serif;
+    min-height: 100vh;
+  }
+  header {
+    background: linear-gradient(135deg, #1a0d3a 0%, #0d0a1a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 24px;
+    text-align: center;
+  }
+  header h1 {
+    font-size: 1.55rem;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+  header p {
+    color: var(--muted);
+    font-size: 0.88rem;
+    margin-top: 4px;
+  }
+  .layout {
+    display: flex;
+    flex-direction: column;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 16px;
+    gap: 20px;
+  }
+
+  /* Player */
+  .player-wrap {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+  }
+  .player-wrap h2 {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .yt-embed {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #000;
+  }
+  .yt-embed iframe {
+    width: 100%; height: 100%;
+    border: none;
+  }
+  .controls {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .controls label {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .controls input[type=range] {
+    flex: 1;
+    min-width: 100px;
+    accent-color: var(--accent);
+  }
+  .btn {
+    background: var(--accent);
+    color: #1a0a00;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 16px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn:hover { background: #ffba55; }
+  .btn.secondary {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+  }
+  .btn.secondary:hover { background: rgba(245,166,35,0.12); }
+  .time-display {
+    font-size: 0.82rem;
+    color: var(--muted);
+    min-width: 80px;
+    text-align: right;
+  }
+
+  /* Notice */
+  .notice {
+    background: rgba(245,166,35,0.08);
+    border: 1px solid rgba(245,166,35,0.25);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .notice strong { color: var(--accent); }
+
+  /* Lyrics */
+  .lyrics-wrap {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .lyrics-wrap h2 {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 18px;
+  }
+  .section {
+    margin-bottom: 28px;
+  }
+  .section-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent2);
+    margin-bottom: 10px;
+    font-family: sans-serif;
+  }
+  .verse {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border-left: 3px solid transparent;
+    transition: background 0.3s, border-color 0.3s;
+    cursor: pointer;
+  }
+  .verse:hover {
+    background: rgba(255,255,255,0.04);
+  }
+  .verse.active {
+    background: var(--active-bg);
+    border-left-color: var(--accent);
+  }
+  .line {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--text);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .line span.word {
+    display: inline;
+    border-radius: 4px;
+    padding: 1px 2px;
+    transition: background 0.25s, color 0.25s;
+  }
+  .line span.word.lit {
+    background: var(--highlight);
+    color: #1a0a00;
+    font-weight: bold;
+  }
+  .verse-num {
+    font-size: 0.7rem;
+    color: var(--muted);
+    float: right;
+    font-family: sans-serif;
+    margin-top: 2px;
+  }
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+  }
+  .jump-btn {
+    font-size: 0.72rem;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 8px;
+    cursor: pointer;
+    float: right;
+    margin-top: 3px;
+    font-family: sans-serif;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .jump-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+  @media (max-width: 600px) {
+    .line { font-size: 1rem; }
+    header h1 { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🙏 Hanuman Chalisa</h1>
+  <p>M.S. Subbulakshmi &amp; Radha Viswanathan · English Transliteration with Live Highlighting</p>
+</header>
+
+<div class="layout">
+
+  <div class="player-wrap">
+    <h2>▶ Audio – M.S. Subbulakshmi</h2>
+    <div class="yt-embed">
+      <iframe id="yt"
+        src="https://www.youtube.com/embed/AETFmMYhPoo?enablejsapi=1&origin=null"
+        allow="autoplay; encrypted-media"
+        allowfullscreen>
+      </iframe>
+    </div>
+    <div class="controls">
+      <button class="btn secondary" onclick="offsetMinus()">⏪ -2s</button>
+      <button class="btn secondary" onclick="offsetPlus()">⏩ +2s</button>
+      <label>Offset: <span id="offsetVal">0</span>s</label>
+      <div class="time-display">⏱ <span id="curTime">0:00</span></div>
+    </div>
+  </div>
+
+  <div class="notice">
+    <strong>How to use:</strong> Press play on the video above. The lyrics below will automatically highlight as the song progresses.
+    If the highlighting is slightly off, use the <strong>⏪ / ⏩</strong> offset buttons to fine-tune the sync.
+    You can also <strong>click any verse</strong> to jump the song to that point.
+  </div>
+
+  <div class="lyrics-wrap">
+    <h2>📖 English Transliteration</h2>
+    <div id="lyrics"></div>
+  </div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// LYRICS DATA
+// Each verse: { id, lines: [{words:["word","..."]}], startTime (sec), label? }
+// Timestamps are calibrated for the ~10 min MSS Saregama version
+// ─────────────────────────────────────────────
+const sections = [
+  {
+    label: "Doha (Opening Couplet)",
+    verses: [
+      {
+        id: 0, startTime: 4,
+        lines: [
+          { w: ["Shrī", "guru", "charan", "saroj", "raj,", "nij", "manu", "mukuru", "sudhāri"] },
+          { w: ["Baranau~", "Raghubar", "bimal", "jasu,", "jo", "dāyaku", "phal", "chāri"] }
+        ]
+      },
+      {
+        id: 1, startTime: 22,
+        lines: [
+          { w: ["Buddhihīn", "tanu", "jānike,", "sumiraun", "Pavan", "Kumār"] },
+          { w: ["Bal", "buddhi", "vidyā", "dehu", "mohi,", "harahu", "kalesh", "vikār"] }
+        ]
+      }
+    ]
+  },
+  {
+    label: "Chaupāī (The 40 Verses)",
+    verses: [
+      { id:2, startTime:42,  lines:[{w:["Jay", "Hanumān", "gyān", "gun", "sāgar"]},{w:["Jay", "Kapīs", "tihun~", "lok", "ujāgar"]}] },
+      { id:3, startTime:55,  lines:[{w:["Rām", "doot", "atulit", "bal", "dhāmā"]},{w:["Anjani-putra", "Pavanasut", "nāmā"]}] },
+      { id:4, startTime:68,  lines:[{w:["Mahābīr", "bikram", "Bajrangī"]},{w:["Kumati", "nivār", "sumati", "ke", "sangī"]}] },
+      { id:5, startTime:81,  lines:[{w:["Kanchan", "baran", "birāj", "subesā"]},{w:["Kānan", "kundal", "kunchit", "kesā"]}] },
+      { id:6, startTime:94,  lines:[{w:["Hāth", "bajra", "au", "dhvajā", "birājai"]},{w:["Kāndhey", "moonj", "janeu", "sājai"]}] },
+      { id:7, startTime:107, lines:[{w:["Shankar", "suvan", "Kesarī-nandan"]},{w:["Tej", "pratāp", "mahā", "jag", "bandan"]}] },
+      { id:8, startTime:120, lines:[{w:["Vidyāvān", "gunī", "ati", "chātur"]},{w:["Rām", "kāj", "karibe", "ko", "ātur"]}] },
+      { id:9, startTime:133, lines:[{w:["Prabhu", "charitra", "sunibe", "ko", "rasiyā"]},{w:["Rām", "Lakhan", "Sītā", "man", "basiyā"]}] },
+      { id:10, startTime:146, lines:[{w:["Sūkshma", "rūp", "dhari", "Siyahi~", "dikhāvā"]},{w:["Bikat", "rūp", "dhari", "Lanka", "jarāvā"]}] },
+      { id:11, startTime:159, lines:[{w:["Bhīm", "rūp", "dhari", "asur", "sanhāre"]},{w:["Rāmchandra", "ke", "kāj", "sanhāre"]}] },
+      { id:12, startTime:173, lines:[{w:["Lāy", "sajīvan", "Lakhan", "jiyāye"]},{w:["Shrī", "Raghubar", "harashi", "ur", "lāye"]}] },
+      { id:13, startTime:187, lines:[{w:["Raghupati", "kīnhī", "bahut", "baḍāī"]},{w:["Tum", "mam", "priya", "Bharatahi", "sam", "bhāī"]}] },
+      { id:14, startTime:200, lines:[{w:["Sahas", "badan", "tumharo", "jas", "gāvain"]},{w:["As", "kahi", "Shrīpati", "kanth", "lagāvain"]}] },
+      { id:15, startTime:214, lines:[{w:["Sanakādik", "Brahmādi", "munīsā"]},{w:["Nārad", "Sārad", "sahit", "Ahīsā"]}] },
+      { id:16, startTime:227, lines:[{w:["Yam", "Kuber", "digpāl", "jahān", "te"]},{w:["Kabi", "kobid", "kahi", "sake", "kahān", "te"]}] },
+      { id:17, startTime:241, lines:[{w:["Tum", "upkār", "Sugrīvahi~", "kīnhā"]},{w:["Rām", "milāy", "rāj", "pad", "dīnhā"]}] },
+      { id:18, startTime:255, lines:[{w:["Tumharo", "mantra", "Bibhīshan", "mānā"]},{w:["Lankeshvar", "bhaye", "sab", "jag", "jānā"]}] },
+      { id:19, startTime:268, lines:[{w:["Jug", "sahasr", "jojan", "par", "bhānu~"]},{w:["Lī lyō", "tāhi", "madhur", "phal", "jānu~"]}] },
+      { id:20, startTime:282, lines:[{w:["Prabhu", "mudrikā", "meli", "mukh", "māhī~"]},{w:["Jaladhi", "lānghi", "gaye", "acharaj", "nāhī~"]}] },
+      { id:21, startTime:296, lines:[{w:["Durgam", "kāj", "jagat", "ke", "jete"]},{w:["Sugam", "anugraha", "tumhare", "tete"]}] },
+      { id:22, startTime:309, lines:[{w:["Rām", "duāre", "tum", "rakhvāre"]},{w:["Hot", "na", "āgyā", "binu", "paisāre"]}] },
+      { id:23, startTime:323, lines:[{w:["Sab", "sukh", "lahai", "tumhārī", "sarnā"]},{w:["Tum", "rachhak", "kāhu~", "ko", "dar", "nā"]}] },
+      { id:24, startTime:336, lines:[{w:["Āpan", "tej", "samhāro", "āpai"]},{w:["Tīnon", "lok", "hānk", "ten", "kānpai"]}] },
+      { id:25, startTime:350, lines:[{w:["Bhoot", "pisāch", "nikat", "nahin", "āvai"]},{w:["Mahābīr", "jab", "nām", "sunāvai"]}] },
+      { id:26, startTime:363, lines:[{w:["Nāsai", "rog", "harai", "sab", "pīrā"]},{w:["Japat", "nirantar", "Hanumat", "bīrā"]}] },
+      { id:27, startTime:377, lines:[{w:["Sankat", "ten", "Hanumān", "chhuḍāvai"]},{w:["Man", "kram", "bachan", "dhyān", "jo", "lāvai"]}] },
+      { id:28, startTime:391, lines:[{w:["Sab", "par", "Rām", "tapsvī", "rājā"]},{w:["Tin", "ke", "kāj", "sakal", "tum", "sājā"]}] },
+      { id:29, startTime:404, lines:[{w:["Aur", "manorath", "jo", "koi", "lāvai"]},{w:["Soi", "amit", "jīvan", "phal", "pāvai"]}] },
+      { id:30, startTime:418, lines:[{w:["Chāron", "jug", "partāp", "tumhārā"]},{w:["Hai", "parsiddh", "jagat", "ujiyārā"]}] },
+      { id:31, startTime:431, lines:[{w:["Sādhu", "sant", "ke", "tum", "rakhvāre"]},{w:["Asur", "nikandan", "Rām", "dulāre"]}] },
+      { id:32, startTime:445, lines:[{w:["Asht", "siddhi", "nau", "nidhi", "ke", "dātā"]},{w:["As", "bar", "dīn", "Jānakī", "mātā"]}] },
+      { id:33, startTime:458, lines:[{w:["Rām", "rasāyan", "tumhare", "pāsā"]},{w:["Sadā", "raho", "Raghupati", "ke", "dāsā"]}] },
+      { id:34, startTime:472, lines:[{w:["Tumhare", "bhajan", "Rām", "ko", "pāvai"]},{w:["Janam", "janam", "ke", "dukh", "bisrāvai"]}] },
+      { id:35, startTime:486, lines:[{w:["Ant", "kāl", "Raghubar", "pur", "jāī"]},{w:["Jahān", "janm", "Hari-bhakt", "kahāī"]}] },
+      { id:36, startTime:499, lines:[{w:["Aur", "devtā", "chitt", "na", "dharaī"]},{w:["Hanumat", "seī", "sarb", "sukh", "karaī"]}] },
+      { id:37, startTime:513, lines:[{w:["Sankat", "katai", "mitai", "sab", "pīrā"]},{w:["Jo", "sumirai", "Hanumat", "balabīrā"]}] },
+      { id:38, startTime:526, lines:[{w:["Jai", "jai", "jai", "Hanumān", "Gosāī~"]},{w:["Kripā", "karahu", "Guru", "Dev", "kī", "nāī~"]}] },
+      { id:39, startTime:540, lines:[{w:["Jo", "sat", "bār", "pāth", "kar", "koī"]},{w:["Chhoothahi", "bandi", "mahā", "sukh", "hoī"]}] },
+      { id:40, startTime:553, lines:[{w:["Jo", "yah", "padhai", "Hanumān", "Chalīsā"]},{w:["Hoy", "siddhi", "sākhī", "Gaurīsā"]}] },
+      { id:41, startTime:567, lines:[{w:["Tulsīdās", "sadā", "Hari", "cherā"]},{w:["Kījai", "nāth", "hridaya", "mah~", "derā"]}] }
+    ]
+  },
+  {
+    label: "Doha (Closing Couplet)",
+    verses: [
+      {
+        id: 42, startTime: 582,
+        lines: [
+          { w: ["Pavantanay", "sankat", "haran,", "mangal", "moorati", "roop"] },
+          { w: ["Rām", "Lakhan", "Sītā", "sahit,", "hridaya", "basahu", "Sur", "bhoop"] }
+        ]
+      }
+    ]
+  }
+];
+
+// ─────────────────────────────────────────────
+// BUILD DOM
+// ─────────────────────────────────────────────
+const lyricsDiv = document.getElementById('lyrics');
+const allVerses = []; // flat list {el, startTime, wordEls}
+
+sections.forEach((sec, si) => {
+  const secDiv = document.createElement('div');
+  secDiv.className = 'section';
+  const lbl = document.createElement('div');
+  lbl.className = 'section-label';
+  lbl.textContent = sec.label;
+  secDiv.appendChild(lbl);
+
+  sec.verses.forEach((v, vi) => {
+    const vDiv = document.createElement('div');
+    vDiv.className = 'verse';
+    vDiv.id = 'v' + v.id;
+
+    const numEl = document.createElement('span');
+    numEl.className = 'verse-num';
+    numEl.textContent = v.id <= 1 ? '' : (v.id <= 41 ? '#' + (v.id - 1) : '');
+    vDiv.appendChild(numEl);
+
+    const jumpBtn = document.createElement('button');
+    jumpBtn.className = 'jump-btn';
+    jumpBtn.textContent = '⏎ jump';
+    jumpBtn.onclick = (e) => {
+      e.stopPropagation();
+      seekTo(v.startTime);
+    };
+    vDiv.appendChild(jumpBtn);
+
+    const wordEls = [];
+    v.lines.forEach(line => {
+      const lineEl = document.createElement('span');
+      lineEl.className = 'line';
+      line.w.forEach((word, wi) => {
+        const span = document.createElement('span');
+        span.className = 'word';
+        span.textContent = word + ' ';
+        lineEl.appendChild(span);
+        wordEls.push(span);
+      });
+      vDiv.appendChild(lineEl);
+    });
+
+    vDiv.addEventListener('click', () => seekTo(v.startTime));
+
+    secDiv.appendChild(vDiv);
+    allVerses.push({ el: vDiv, startTime: v.startTime, wordEls, endTime: 0 });
+  });
+
+  if (si < sections.length - 1) {
+    const hr = document.createElement('hr');
+    hr.className = 'divider';
+    secDiv.appendChild(hr);
+  }
+  lyricsDiv.appendChild(secDiv);
+});
+
+// Set endTimes
+for (let i = 0; i < allVerses.length; i++) {
+  allVerses[i].endTime = i < allVerses.length - 1 ? allVerses[i+1].startTime : 999;
+}
+
+// ─────────────────────────────────────────────
+// YouTube IFrame API
+// ─────────────────────────────────────────────
+let player, playerReady = false;
+let timeOffset = 0;
+let currentVerseIdx = -1;
+
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('yt', {
+    events: {
+      onReady: () => { playerReady = true; },
+    }
+  });
+}
+
+// Load YT API
+const tag = document.createElement('script');
+tag.src = 'https://www.youtube.com/iframe_api';
+document.head.appendChild(tag);
+
+// Polling timer
+setInterval(() => {
+  if (!playerReady) return;
+  let t;
+  try { t = player.getCurrentTime() + timeOffset; } catch(e) { return; }
+  if (isNaN(t)) return;
+
+  // update time display
+  document.getElementById('curTime').textContent = fmt(t);
+
+  // find active verse
+  let activeIdx = -1;
+  for (let i = 0; i < allVerses.length; i++) {
+    if (t >= allVerses[i].startTime && t < allVerses[i].endTime) {
+      activeIdx = i;
+      break;
+    }
+  }
+
+  if (activeIdx !== currentVerseIdx) {
+    if (currentVerseIdx >= 0) {
+      allVerses[currentVerseIdx].el.classList.remove('active');
+      allVerses[currentVerseIdx].wordEls.forEach(w => w.classList.remove('lit'));
+    }
+    currentVerseIdx = activeIdx;
+    if (activeIdx >= 0) {
+      const v = allVerses[activeIdx];
+      v.el.classList.add('active');
+      // Scroll into view
+      v.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Animate words
+      animateWords(v.wordEls, v.startTime, v.endTime);
+    }
+  }
+}, 200);
+
+function animateWords(wordEls, start, end) {
+  const n = wordEls.length;
+  const duration = Math.min(end - start, 15); // max 15s for word animation
+  wordEls.forEach(w => w.classList.remove('lit'));
+  if (n === 0) return;
+
+  wordEls.forEach((w, i) => {
+    const delay = (duration / n) * i * 1000;
+    setTimeout(() => {
+      if (allVerses[currentVerseIdx]?.wordEls === wordEls) {
+        wordEls.forEach(x => x.classList.remove('lit'));
+        w.classList.add('lit');
+      }
+    }, delay);
+  });
+}
+
+function fmt(s) {
+  s = Math.max(0, Math.floor(s));
+  return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+}
+
+function seekTo(t) {
+  if (!playerReady) return;
+  try { player.seekTo(t - timeOffset, true); player.playVideo(); } catch(e){}
+}
+
+function offsetMinus() {
+  timeOffset = Math.max(-30, timeOffset - 2);
+  document.getElementById('offsetVal').textContent = timeOffset;
+}
+function offsetPlus() {
+  timeOffset = Math.min(30, timeOffset + 2);
+  document.getElementById('offsetVal').textContent = timeOffset;
+}
+</script>
+
+</body>
+</html>
